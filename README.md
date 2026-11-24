@@ -82,3 +82,7 @@ File tai theo ten bai se co dang:
 ## Luu y
 
 YouTube khong phai nguon lossless. Convert sang FLAC khong lam audio thanh lossless that neu nguon goc da bi nen.
+
+## License
+
+MIT — xem [LICENSE](LICENSE).
