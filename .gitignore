@@ -1,0 +1,13 @@
+# Binary portable - tai lai theo huong dan trong README (~214 MB)
+/tools/
+
+# Nhac da tai ve
+/downloads/
+
+# Input that cua tung nguoi - dung ban .example lam mau
+/queries.txt
+/links.txt
+
+# File do script sinh ra
+/downloaded_archive.txt
+/missing_after_run.txt

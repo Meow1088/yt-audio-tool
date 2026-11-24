@@ -1,0 +1,8 @@
+# Paste one song name / search query per line.
+# The MP3 script downloads the first YouTube result that is under 10 minutes.
+# Add words like "official", "creative commons", "ai music", "royalty free",
+# or the channel name to reduce wrong matches.
+#
+# Examples:
+# lofi ai music royalty free no copyright
+# cyberpunk synthwave ai music creative commons
