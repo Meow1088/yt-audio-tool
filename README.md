@@ -1,88 +1,116 @@
-# YouTube Audio Tool
+<div align="center">
 
-Tool nay dung `yt-dlp` va `ffmpeg` portable de tai audio tu danh sach link.
+# 🎧 yt-audio-tool
 
-Chi nen dung voi noi dung dai ka co quyen tai: video/playlist cua minh, nhac Creative Commons, public domain, YouTube Audio Library, nhac AI/free ma uploader cho phep download.
+**Bộ tải audio YouTube portable cho Windows — dán link hoặc chỉ cần gõ tên bài.**
+**Tự lọc bản mix dài, tự đổi tên theo thứ tự, tự kiểm tra file tải về.**
 
-## Cai dat lan dau
+![Windows](https://img.shields.io/badge/Windows-portable-0078D6?logo=windows&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1+-5391FE?logo=powershell&logoColor=white)
+![yt-dlp](https://img.shields.io/badge/yt--dlp-engine-FF0000?logo=youtube&logoColor=white)
+![ffmpeg](https://img.shields.io/badge/ffmpeg-MP3-007808?logo=ffmpeg&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-Repo khong chua binary (~214 MB) va khong chua input ca nhan. Sau khi clone, chay:
+</div>
 
-```text
+> **Không cài đặt, không quyền admin.** Chạy `setup.bat` một lần, tool tự tải `yt-dlp` + `ffmpeg` vào thư mục `tools\`.
+> Xóa thư mục là gỡ sạch.
+
+> ⚖️ Chỉ dùng với nội dung bạn **có quyền tải**: video/playlist của chính bạn, nhạc Creative Commons, public domain, YouTube Audio Library, nhạc mà người đăng cho phép tải.
+
+---
+
+## ✨ Tính năng
+
+| | Tính năng | Chi tiết |
+|---|---|---|
+| 🔗 | **Tải theo link** | Video, playlist hay cả channel — mỗi link một dòng trong `links.txt` |
+| 🔎 | **Tải theo tên bài** | Gõ tên bài vào `queries.txt`, tool tự tìm trên YouTube và lấy kết quả khớp |
+| 👀 | **Xem trước** | Liệt kê 5 kết quả đầu mỗi bài để kiểm tra trước khi tải |
+| ⏱️ | **Lọc theo thời lượng** | Bỏ qua video dài hơn 10 phút (thường là bản mix / liên khúc), tự thử kết quả kế tiếp — tối đa 10 lần |
+| 🔢 | **Đặt tên theo thứ tự** | `01 - Tên bài.mp3`, `02 - …` đúng thứ tự trong `queries.txt` |
+| ✅ | **Kiểm tra sau khi tải** | Báo file thiếu, tên không khớp, file rác, file có dung lượng bất thường (dấu hiệu tải nhầm video) |
+| 🧾 | **Không tải trùng** | Tải theo link có ghi log `downloaded_archive.txt`; tải theo tên thì chống trùng bằng tên file |
+| 📋 | **Báo bài thiếu** | Bài nào tìm mãi không được sẽ ghi vào `missing_after_run.txt` |
+
+---
+
+## 🚀 Bắt đầu
+
+```bat
+git clone https://github.com/Meow1088/yt-audio-tool
+cd yt-audio-tool
 setup.bat
 ```
 
-Script se tai `yt-dlp.exe` va `ffmpeg`, roi tao `queries.txt` / `links.txt` tu ban `.example`.
-Chay lai luc nao cung duoc: cai gi da co thi bo qua, va no KHONG BAO GIO ghi de
-`queries.txt` / `links.txt` neu dai ka da dien vao roi. Muon tai lai binary moi thi:
+`setup.bat` sẽ:
+- tải `yt-dlp.exe` và `ffmpeg` (bản *essentials*) vào `tools\`,
+- tạo `links.txt` / `queries.txt` từ file `.example`,
+- báo máy đã có Node / Deno chưa (nên có, để yt-dlp lấy đủ định dạng).
 
-```text
-setup.bat -Force
+Chạy lại bao nhiêu lần cũng được: cái gì có rồi thì bỏ qua, **không bao giờ ghi đè** `links.txt` / `queries.txt` bạn đã điền. Muốn tải lại bản mới của yt-dlp/ffmpeg: `setup.bat -Force`.
+
+<details>
+<summary>Cài bằng tay (không chạy script)</summary>
+
+1. Tải `yt-dlp.exe` từ https://github.com/yt-dlp/yt-dlp/releases → đặt vào `tools\yt-dlp.exe`
+2. Tải bản *essentials* từ https://www.gyan.dev/ffmpeg/builds/ → chép `ffmpeg.exe` + `ffprobe.exe` vào `tools\ffmpeg\bin\`
+3. Chép `links.txt.example` → `links.txt`, `queries.txt.example` → `queries.txt`
+
+</details>
+
+---
+
+## 📖 Cách dùng
+
+### 🔗 Có sẵn link
+
+1. Dán link vào `links.txt`, mỗi dòng một link.
+2. Chạy `download_mp3.bat`.
+3. File MP3 nằm trong `downloads\`.
+
+### 🔎 Chỉ có tên bài
+
+1. Gõ tên bài vào `queries.txt`, mỗi dòng một bài.
+2. (Nên làm) chạy `download_by_song_names_preview.bat` để xem kết quả tìm được.
+3. Chạy `download_by_song_names_mp3.bat`.
+4. Chạy `check_downloads.bat` để kiểm tra lại.
+
+> 💡 Thêm từ khóa như `official`, `creative commons`, `royalty free`, `no copyright` hoặc tên kênh vào tên bài để giảm tải nhầm.
+
+---
+
+## 🧰 Các lệnh
+
+| Lệnh | Làm gì |
+|---|---|
+| `setup.bat` | Tải yt-dlp + ffmpeg, tạo file đầu vào |
+| `download_mp3.bat` | Tải theo `links.txt`, xuất MP3 chất lượng cao |
+| `download_original_audio.bat` | Tải audio gốc tốt nhất, nhanh hơn, không convert |
+| `download_by_song_names_preview.bat` | Xem trước 5 kết quả tìm kiếm mỗi bài, không tải |
+| `download_by_song_names_mp3.bat` | Tìm theo `queries.txt` rồi tải MP3 |
+| `organize_existing_by_queries.bat` | Đổi tên file đã tải theo thứ tự `queries.txt`, dọn ảnh bìa `.jpg` sót lại |
+| `check_downloads.bat` | Kiểm tra thiếu / sai tên / file rác / dung lượng bất thường |
+
+## 📁 Cấu trúc
+
+```
+yt-audio-tool/
+├── *.bat / *.ps1          # các lệnh ở trên (lệnh phức tạp có .ps1 cùng tên)
+├── links.txt.example      # mẫu danh sách link
+├── queries.txt.example    # mẫu danh sách tên bài
+├── tools/                 # yt-dlp + ffmpeg (setup.bat tải về, không lên git)
+└── downloads/             # file tải về (không lên git)
 ```
 
-Nen cai them Node hoac Deno. Script da bat san `--js-runtimes node`; thieu runtime thi
-yt-dlp van chay nhung se canh bao deprecation va co the thieu mot so format.
-`setup.bat` co bao cho biet may da co runtime chua.
+---
 
-### Cai bang tay
+## ⚠️ Lưu ý
 
-Neu khong muon chay script: tai `yt-dlp.exe` tu
-https://github.com/yt-dlp/yt-dlp/releases dat vao `tools\yt-dlp.exe`, tai ban
-`essentials` tu https://www.gyan.dev/ffmpeg/builds/ roi copy `ffmpeg.exe` +
-`ffprobe.exe` vao `tools\ffmpeg\bin\`, cuoi cung copy 2 file `.example` bo duoi `.example`.
+- YouTube **không phải nguồn lossless**. Convert sang FLAC không làm âm thanh tốt hơn nếu nguồn gốc đã bị nén.
+- yt-dlp thay đổi thường xuyên theo YouTube — gặp lỗi tải thì chạy `setup.bat -Force` để lấy bản mới nhất.
 
-## Cach dung nhanh
+## 📝 Giấy phép & ghi nhận
 
-1. Mo `links.txt`.
-2. Dan moi link YouTube video/playlist/channel tren mot dong.
-3. Chay `download_mp3.bat` de tai va convert sang MP3.
-4. File se nam trong folder `downloads`.
-
-## Tu tim theo ten bai
-
-1. Mo `queries.txt`.
-2. Dan moi ten bai/search query tren mot dong.
-3. Neu so bi nham video, chay `download_by_song_names_preview.bat` de xem 5 ket qua dau.
-4. Chay `download_by_song_names_mp3.bat` de tai ket qua dau tien thanh MP3.
-
-Meo: nen them tu khoa nhu `official`, `creative commons`, `royalty free`, `ai music`, `no copyright`, hoac ten kenh de giam tai nham.
-
-Script bo qua video dai hon 10 phut (thuong la ban mix / lien khuc chu khong phai bai hat),
-tu dong thu ket qua tiep theo. Bai nao thu het 10 ket qua van khong duoc se ghi vao
-`missing_after_run.txt`.
-
-File tai theo ten bai se co dang:
-
-```text
-01 - Ten Bai Trong Queries.mp3
-02 - Ten Bai Tiep Theo.mp3
-```
-
-## Tuy chon
-
-- `setup.bat`: tai yt-dlp + ffmpeg va tao file input tu ban `.example`.
-- `download_mp3.bat`: xuat MP3 chat luong cao, can ffmpeg.
-- `download_original_audio.bat`: tai audio goc tot nhat, nhanh hon, khong convert lai.
-- `download_by_song_names_mp3.bat`: tu tim YouTube theo `queries.txt` roi tai ket qua dau tien.
-- `download_by_song_names_preview.bat`: xem truoc 5 ket qua tim kiem moi bai, khong tai.
-- `organize_existing_by_queries.bat`: doi ten file da tai theo thu tu trong `queries.txt` va xoa anh bia `.jpg` bi roi lai.
-- `check_downloads.bat`: kiem tra thieu file, ten khong khop, file rac khong phai MP3, va file co dung luong bat thuong (dau hieu tai nham video).
-
-## File quan trong
-
-- `links.txt`: danh sach link dau vao (khong len git, xem `links.txt.example`).
-- `queries.txt`: danh sach ten bai/search query (khong len git, xem `queries.txt.example`).
-- `downloads`: noi luu file tai ve (khong len git).
-- `downloaded_archive.txt`: log cac video da tai qua `links.txt`, giup lan sau khong tai trung.
-  Luu y: luong tim theo ten bai KHONG ghi vao file nay, no chong trung bang ten file.
-- `missing_after_run.txt`: sinh ra sau moi lan chay neu co bai khong tai duoc.
-- `tools/yt-dlp.exe`: downloader.
-- `tools/ffmpeg/bin/ffmpeg.exe`: converter MP3.
-
-## Luu y
-
-YouTube khong phai nguon lossless. Convert sang FLAC khong lam audio thanh lossless that neu nguon goc da bi nen.
-
-## License
-
-MIT — xem [LICENSE](LICENSE).
+- Mã nguồn: **MIT** — xem [LICENSE](LICENSE).
+- Dùng [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense) và [FFmpeg](https://ffmpeg.org/) (LGPL/GPL) — tải riêng, không đóng gói trong repo.
